@@ -4,17 +4,50 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import SearchInterface from '@/components/SearchInterface';
 import VendorResponse from '@/components/VendorResponse';
-import { MapPin, Search, Zap, Users, Shield, Clock } from 'lucide-react';
+import RequestModal from '@/components/RequestModal';
+import VendorDashboard from '@/components/VendorDashboard';
+import { MapPin, Search, Zap, Users, Shield, Clock, LogOut } from 'lucide-react';
 import heroImage from '@/assets/hero-market.jpg';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const [vendorResponses, setVendorResponses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchVendorResponses();
-  }, []);
+    if (user) {
+      fetchUserProfile();
+      fetchVendorResponses();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  const fetchUserProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const fetchVendorResponses = async () => {
     try {
@@ -64,6 +97,184 @@ const Index = () => {
       setLoading(false);
     }
   };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  // Show auth prompt if not logged in
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-[var(--gradient-warm)]">
+        {/* Hero Section with Auth CTA */}
+        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${heroImage})` }}
+          >
+            <div className="absolute inset-0 bg-[var(--gradient-hero)] opacity-80"></div>
+          </div>
+          
+          <div className="relative z-10 container mx-auto px-4 text-center space-y-8">
+            <div className="space-y-4 max-w-4xl mx-auto">
+              <Badge className="bg-primary/20 text-primary-foreground border-primary/30 text-lg px-6 py-2">
+                Local Goods, One Click Away
+              </Badge>
+              <h1 className="text-5xl md:text-7xl font-bold text-primary-foreground leading-tight">
+                Discover Local
+                <span className="block bg-gradient-to-r from-locify-beige to-white bg-clip-text text-transparent">
+                  Products Instantly
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl text-primary-foreground/80 max-w-2xl mx-auto">
+                Connect with nearby vendors, find unique products, and support your local community with smart search and real-time responses.
+              </p>
+            </div>
+
+            <div className="max-w-md mx-auto space-y-4">
+              <Button 
+                size="lg" 
+                className="w-full h-16 text-xl font-semibold bg-card text-foreground hover:bg-card/90 shadow-[var(--shadow-warm)] hover:shadow-[var(--shadow-glow)] transition-[var(--transition-bounce)]"
+                onClick={() => navigate('/auth')}
+              >
+                <Search className="mr-3 h-6 w-6" />
+                Get Started
+              </Button>
+              <p className="text-primary-foreground/60 text-sm">
+                Join thousands discovering local treasures
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-20 relative">
+          <div className="container mx-auto px-4">
+            <div className="text-center space-y-4 mb-16">
+              <h2 className="text-4xl font-bold text-foreground">How Locify Works</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Three simple steps to connect with local vendors and find exactly what you need
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="text-center p-8 hover:shadow-[var(--shadow-warm)] transition-[var(--transition-smooth)] border-border/50">
+                <CardContent className="space-y-4">
+                  <div className="mx-auto w-16 h-16 bg-[var(--gradient-primary)] rounded-full flex items-center justify-center">
+                    <Search className="h-8 w-8 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground">Smart Search</h3>
+                  <p className="text-muted-foreground">
+                    Describe what you need or upload a photo. Our AI understands exactly what you're looking for.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center p-8 hover:shadow-[var(--shadow-warm)] transition-[var(--transition-smooth)] border-border/50">
+                <CardContent className="space-y-4">
+                  <div className="mx-auto w-16 h-16 bg-[var(--gradient-primary)] rounded-full flex items-center justify-center">
+                    <Zap className="h-8 w-8 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground">Instant Broadcast</h3>
+                  <p className="text-muted-foreground">
+                    Your request goes out to all nearby vendors instantly. No waiting, no endless browsing.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center p-8 hover:shadow-[var(--shadow-warm)] transition-[var(--transition-smooth)] border-border/50">
+                <CardContent className="space-y-4">
+                  <div className="mx-auto w-16 h-16 bg-[var(--gradient-primary)] rounded-full flex items-center justify-center">
+                    <Users className="h-8 w-8 text-primary-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground">Choose & Connect</h3>
+                  <p className="text-muted-foreground">
+                    Compare responses, chat with vendors, and arrange pickup or delivery that works for you.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="bg-locify-green-dark text-locify-beige py-12">
+          <div className="container mx-auto px-4 text-center space-y-4">
+            <h3 className="text-2xl font-bold">Locify</h3>
+            <p className="text-locify-beige/80">Connecting communities, one search at a time.</p>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+
+  // Show authenticated user interface
+  return (
+    <div className="min-h-screen bg-[var(--gradient-warm)]">
+      {/* Header with user info */}
+      <header className="bg-card/90 border-b border-border/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-foreground">Locify</h1>
+            {userProfile && (
+              <Badge variant="secondary">
+                {userProfile.role === 'vendor' ? 'Vendor' : 'Shopper'}
+              </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">
+              Welcome, {userProfile?.name || user.email}!
+            </span>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8">
+        {userProfile?.role === 'vendor' ? (
+          <VendorDashboard />
+        ) : (
+          <div className="space-y-8">
+            {/* Shopper Interface */}
+            <div className="text-center space-y-4">
+              <h2 className="text-3xl font-bold text-foreground">What are you looking for?</h2>
+              <RequestModal onRequestCreated={fetchVendorResponses} />
+            </div>
+
+            {/* Search Interface */}
+            <SearchInterface />
+
+            {/* Vendor Responses */}
+            <section className="space-y-6">
+              <h3 className="text-2xl font-bold text-foreground">Recent Vendor Responses</h3>
+              <div className="space-y-4">
+                {loading ? (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">Loading vendor responses...</p>
+                  </div>
+                ) : vendorResponses.length > 0 ? (
+                  vendorResponses.map((vendor, index) => (
+                    <VendorResponse key={index} vendor={vendor} />
+                  ))
+                ) : (
+                  <Card>
+                    <CardContent className="p-6 text-center">
+                      <p className="text-muted-foreground">No vendor responses yet. Create a request to get started!</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[var(--gradient-warm)]">
