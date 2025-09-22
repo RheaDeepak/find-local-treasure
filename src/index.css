@@ -2,87 +2,122 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Locify Design System - Earthy, Community-Focused Palette */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Locify Color Palette */
+    --background: 50 20% 72%;
+    --foreground: 80 15% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 80 15% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 80 15% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 30 55% 32%;
+    --primary-foreground: 50 20% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 40 30% 52%;
+    --secondary-foreground: 30 70% 20%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 45 25% 85%;
+    --muted-foreground: 75 22% 36%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 35 45% 40%;
+    --accent-foreground: 50 20% 95%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 45 25% 80%;
+    --input: 50 20% 88%;
+    --ring: 30 55% 32%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Locify Brand Colors */
+    --locify-brown-dark: 30 70% 20%;
+    --locify-brown: 30 55% 32%;
+    --locify-brown-light: 40 30% 52%;
+    --locify-beige: 45 25% 65%;
+    --locify-sage: 65 18% 60%;
+    --locify-sage-dark: 75 22% 36%;
+    --locify-green-dark: 85 22% 20%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--locify-brown)) 0%, hsl(var(--accent)) 100%);
+    --gradient-warm: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--locify-beige)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--locify-brown-dark)) 0%, hsl(var(--locify-brown)) 50%, hsl(var(--accent)) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -2px hsl(var(--locify-brown) / 0.1);
+    --shadow-warm: 0 8px 30px -4px hsl(var(--locify-brown) / 0.15);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 85 22% 20%;
+    --foreground: 50 20% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 85 22% 22%;
+    --card-foreground: 50 20% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 85 22% 22%;
+    --popover-foreground: 50 20% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 40 30% 52%;
+    --primary-foreground: 30 70% 15%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 75 22% 30%;
+    --secondary-foreground: 45 25% 80%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 75 22% 25%;
+    --muted-foreground: 45 25% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 35 45% 45%;
+    --accent-foreground: 50 20% 95%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 75 22% 30%;
+    --input: 75 22% 28%;
+    --ring: 40 30% 52%;
+
+    /* Dark mode brand colors */
+    --locify-brown-dark: 30 70% 15%;
+    --locify-brown: 40 30% 52%;
+    --locify-brown-light: 45 25% 65%;
+    --locify-beige: 50 20% 80%;
+    --locify-sage: 65 18% 70%;
+    --locify-sage-dark: 75 22% 25%;
+    --locify-green-dark: 85 22% 15%;
+
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--locify-brown)) 0%, hsl(var(--accent)) 100%);
+    --gradient-warm: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--locify-sage-dark)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--locify-green-dark)) 0%, hsl(var(--locify-brown-dark)) 50%, hsl(var(--locify-brown)) 100%);
+
+    /* Dark mode shadows */
+    --shadow-soft: 0 4px 20px -2px hsl(var(--locify-brown-dark) / 0.3);
+    --shadow-warm: 0 8px 30px -4px hsl(var(--locify-brown-dark) / 0.4);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.4);
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -101,5 +136,24 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+  
+  .shadow-warm {
+    box-shadow: var(--shadow-warm);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
   }
 }

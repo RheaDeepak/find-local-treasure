@@ -47,6 +47,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        locify: {
+          "brown-dark": "hsl(var(--locify-brown-dark))",
+          "brown": "hsl(var(--locify-brown))",
+          "brown-light": "hsl(var(--locify-brown-light))",
+          "beige": "hsl(var(--locify-beige))",
+          "sage": "hsl(var(--locify-sage))",
+          "sage-dark": "hsl(var(--locify-sage-dark))",
+          "green-dark": "hsl(var(--locify-green-dark))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
