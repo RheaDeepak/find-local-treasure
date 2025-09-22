@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,35 +6,64 @@ import SearchInterface from '@/components/SearchInterface';
 import VendorResponse from '@/components/VendorResponse';
 import { MapPin, Search, Zap, Users, Shield, Clock } from 'lucide-react';
 import heroImage from '@/assets/hero-market.jpg';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
-  // Sample vendor data for demonstration
-  const sampleVendors = [
-    {
-      name: "Green Valley Farm",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      rating: 4.8,
-      distance: "0.5 mi",
-      responseTime: "2 min ago",
-      price: "$3.50/lb",
-      stock: "In Stock",
-      description: "Fresh, organic tomatoes harvested this morning. Perfect for salads and cooking.",
-      image: "",
-      location: "Downtown Market"
-    },
-    {
-      name: "Artisan Corner",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-      rating: 4.9,
-      distance: "1.2 mi",
-      responseTime: "5 min ago", 
-      price: "$12.00",
-      stock: "3 left",
-      description: "Hand-crafted organic soap made with local ingredients. Lavender scented.",
-      image: "",
-      location: "Craft District"
+  const [vendorResponses, setVendorResponses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchVendorResponses();
+  }, []);
+
+  const fetchVendorResponses = async () => {
+    try {
+      // Fetch vendor responses and stores separately since there's no formal relationship
+      const [responsesResult, storesResult] = await Promise.all([
+        supabase.from('vendor_responses').select('*').limit(10),
+        supabase.from('stores').select('*')
+      ]);
+
+      if (responsesResult.error) {
+        console.error('Error fetching vendor responses:', responsesResult.error);
+        return;
+      }
+
+      if (storesResult.error) {
+        console.error('Error fetching stores:', storesResult.error);
+        return;
+      }
+
+      // Join the data manually
+      const responses = responsesResult.data || [];
+      const stores = storesResult.data || [];
+      
+      const storeMap = new Map(stores.map(store => [store.vendor_id, store]));
+
+      // Transform data to match component expectations
+      const transformedData = responses.map((response, index) => {
+        const store = storeMap.get(response.vendor_id);
+        return {
+          name: store?.store_name || 'Unknown Store',
+          avatar: `https://images.unsplash.com/photo-${1507003211169 + index * 1000}?w=150&h=150&fit=crop&crop=face`,
+          rating: 4.5 + Math.random() * 0.5, // Mock rating for now
+          distance: `${(Math.random() * 2 + 0.1).toFixed(1)} mi`,
+          responseTime: `${Math.floor(Math.random() * 30 + 1)} min ago`,
+          price: response.price ? `$${response.price}` : 'Price on request',
+          stock: response.status === 'pending' ? 'Available' : response.status,
+          description: response.message || 'No description available',
+          image: response.image_url || '',
+          location: store?.address || 'Location not specified'
+        };
+      });
+
+      setVendorResponses(transformedData);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   return (
     <div className="min-h-screen bg-[var(--gradient-warm)]">
@@ -142,9 +171,19 @@ const Index = () => {
           </div>
 
           <div className="max-w-4xl mx-auto space-y-6">
-            {sampleVendors.map((vendor, index) => (
-              <VendorResponse key={index} vendor={vendor} />
-            ))}
+            {loading ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Loading vendor responses...</p>
+              </div>
+            ) : vendorResponses.length > 0 ? (
+              vendorResponses.map((vendor, index) => (
+                <VendorResponse key={index} vendor={vendor} />
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">No vendor responses found. Add some data to your Supabase database!</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
